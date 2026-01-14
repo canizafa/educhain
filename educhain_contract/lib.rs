@@ -226,5 +226,16 @@ mod educhain_contract {
             }
             return Err(Err::InvalidID);
         }
+        #[ink(message)]
+        pub fn get_certificates_of_student(&self, address: Address) -> Result<Vec<Certificate>, Err> {
+            self.invalid_address(address)?;
+            Ok(self._get_certificates_of_student(address))
+        }
+        fn _get_certificates_of_student(&self, address: Address) -> Vec<Certificate> {
+            match self.students_certificates.get(address) {
+                Some(collection) => collection,
+                None => Vec::new(),
+            }
+        }
     }
 }
