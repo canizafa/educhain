@@ -1,11 +1,13 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 pub mod events;
+pub mod errors;
 
 #[ink::contract]
 mod educhain_contract {
     use ink::storage::Mapping;
     use crate::events::AdminAddedEvent;
+    use ink::env::ReturnFlags as revert;
 
     #[ink::storage_item(packed)]
     pub enum Role {
@@ -55,8 +57,11 @@ mod educhain_contract {
         }
         #[ink(message)]
         pub fn add_admin(&mut self, admin_added: Address) {
-            let mut roles = &self.roles;
-            todo!()
-        }
+            
+            if let Some(role) =  self.roles.get(admin_added) {
+                
+            }
+            
+        }   
     }
 }
