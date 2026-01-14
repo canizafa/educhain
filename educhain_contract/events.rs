@@ -1,9 +1,9 @@
+use crate::educhain_contract::Role;
 use ink::Address;
 
-    #[ink::event]
-    pub struct AdminAddedEvent {
-        #[ink(topic)]
-        pub admin_added: Option<Address>,
-        #[ink(topic)]
-        pub owner: Option<Address>,
-    }
+#[ink::event]
+pub struct RoleGranted {
+    #[ink(topic)]
+    address_granted: Address,
+    role_granted: Role,
+}

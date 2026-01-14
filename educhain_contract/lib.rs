@@ -1,14 +1,15 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-pub mod events;
 pub mod errors;
+pub mod events;
 
 #[ink::contract]
 mod educhain_contract {
-    use ink::storage::Mapping;
-    use crate::events::AdminAddedEvent;
-    use ink::env::ReturnFlags as revert;
+    type Err = crate::errors::Errores;
 
+    use ink::storage::Mapping;
+
+    #[derive(PartialEq, Eq)]
     #[ink::storage_item(packed)]
     pub enum Role {
         Owner,
@@ -32,8 +33,6 @@ mod educhain_contract {
         certificate_hash: Hash,
     }
 
-    // pub struct
-
     #[ink(storage)]
     pub struct Educhain {
         roles: Mapping<Address, Role>,
@@ -46,22 +45,28 @@ mod educhain_contract {
             let mut roles = Mapping::new();
             roles.insert(owner, &Role::Owner);
             let students_certificates = Mapping::new();
-            Self::env().emit_event(AdminAddedEvent {
-                admin_added: Some(owner),
-                owner: Some(owner),
-            });
             Self {
                 roles,
                 students_certificates,
             }
         }
         #[ink(message)]
-        pub fn add_admin(&mut self, admin_added: Address) {
-            
-            if let Some(role) =  self.roles.get(admin_added) {
-                
+        pub fn grant_role(&mut self, address: Address, role: Role) -> Result<(), Err> {
+            self._grant_role(address, role)?;
+            Ok(())
+        }
+        fn _grant_role(&mut self, address: Address, role: Role) -> Result<(), Err> {
+            if let Some(address_role) = self.roles.get(address) {
+                if address_role == role {
+                    return Err(Err::SameRole);
+                }
             }
-            
-        }   
+            self.roles.insert(address, &role);
+            Ok(())
+        }
+        #[ink(message)]
+        pub fn revoke_role(&mut self, address: Address) -> Result<(), Err> {
+            Ok(())
+        }
     }
 }

@@ -1,5 +1,5 @@
-
 #[ink::error]
-pub enum Errores{
-  UnitError,
+pub enum Errores {
+    SameRole,
 }
+
