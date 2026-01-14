@@ -1,8 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
+pub mod events;
+
 #[ink::contract]
 mod educhain_contract {
     use ink::storage::Mapping;
+    use crate::events::AdminAddedEvent;
 
     #[ink::storage_item(packed)]
     pub enum Role {
@@ -25,14 +28,6 @@ mod educhain_contract {
         issue_date: Timestamp,
         state: CertificateState,
         certificate_hash: Hash,
-    }
-
-    #[ink(event)]
-    pub struct AdminAddedEvent {
-        #[ink(topic)]
-        admin_added: Option<Address>,
-        #[ink(topic)]
-        owner: Option<Address>,
     }
 
     // pub struct
