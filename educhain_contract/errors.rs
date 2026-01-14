@@ -1,5 +1,11 @@
 #[ink::error]
-pub enum Errores {
+pub enum Errors {
+    InvalidOwner,
     SameRole,
+    CantRevokePublicRole,
+    NotAddressFound,
+    ZeroAddress,
+    NonAuthorizaded,
+    InvalidID,
 }
 
