@@ -176,6 +176,8 @@ mod educhain_contract {
             };
             if let Some(mut collection) = self.students_certificates.get(student_address) {
                 collection.push(certificate.clone());
+                self.students_certificates
+                    .insert(student_address, &collection);
             }
             self.certificates.insert(self.next_id, &certificate);
             self.next_id += 1;
@@ -214,20 +216,24 @@ mod educhain_contract {
         fn _revoke_certification(&mut self, id: u64) -> Result<Address, Err> {
             if let Some(mut certificate) = self.certificates.get(id) {
                 let student_address = certificate.student_address;
-                if let Some(mut student_collection) =
-                    self.students_certificates.get(student_address)
-                {
-                    let _ = student_collection.iter_mut()
-                        .filter(|c| c.id == id)
-                        .map(|c| c.certificate_state = CertificateState::Revoked);
+                if let Some(mut collection) = self.students_certificates.get(student_address) {
+                    if let Some(cert) = collection.iter_mut().find(|c| c.id == id) {
+                        cert.certificate_state = CertificateState::Revoked;
+                    }
+                    self.students_certificates
+                        .insert(student_address, &collection);
                 }
                 certificate.certificate_state = CertificateState::Revoked;
+                self.certificates.insert(id, &certificate);
                 return Ok(student_address);
             }
             return Err(Err::InvalidID);
         }
         #[ink(message)]
-        pub fn get_certificates_of_student(&self, address: Address) -> Result<Vec<Certificate>, Err> {
+        pub fn get_certificates_of_student(
+            &self,
+            address: Address,
+        ) -> Result<Vec<Certificate>, Err> {
             self.invalid_address(address)?;
             Ok(self._get_certificates_of_student(address))
         }
