@@ -8,6 +8,7 @@ mod educhain_contract {
     type Err = crate::errors::Errors;
 
     use crate::events;
+    use ink::prelude::{string::String, vec::Vec};
     use ink::storage::Mapping;
 
     const ZERO_ADDRESS: Address = Address::zero();
@@ -72,8 +73,9 @@ mod educhain_contract {
                 if address_role == Role::Public {
                     return Err(Err::NonAuthorizaded);
                 }
+                return Ok(());
             }
-            Ok(())
+            return Err(Err::InvalidOwner);
         }
         #[ink(message)]
         pub fn grant_role(&mut self, address: Address, role: Role) -> Result<(), Err> {
@@ -242,6 +244,33 @@ mod educhain_contract {
                 Some(collection) => collection,
                 None => Vec::new(),
             }
+        }
+    }
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        fn create_app() -> Educhain {
+            Educhain::new()
+        }
+
+        #[ink::test]
+        fn test_creation() {
+            let app = create_app();
+            assert_eq!(app.owner, Address::zero());
+        }
+        #[ink::test]
+        fn invalid_address() {
+            let app = create_app();
+            let result = app.invalid_address(Address::zero());
+            assert_eq!(result, Err(Err::ZeroAddress));
+        }
+        #[ink::test]
+        fn owner_invalid() {
+            let mut app = create_app();
+            app.owner = Address::zero();
+            let result = app.owner_or_admin(Address::random());
+            assert_eq!(result, Err(Err::InvalidOwner));
         }
     }
 }

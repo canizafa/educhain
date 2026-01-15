@@ -1,5 +1,6 @@
 use crate::educhain_contract::{CertificateState, Role};
 use ink::{Address, env::Timestamp};
+use ink::prelude::string::String;
 
 #[ink::event]
 pub struct RoleGranted {

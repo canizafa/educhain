@@ -1,3 +1,4 @@
+#[derive(PartialEq, Eq, Debug)]
 #[ink::error]
 pub enum Errors {
     InvalidOwner,
