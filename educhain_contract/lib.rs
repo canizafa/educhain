@@ -180,6 +180,9 @@ mod educhain_contract {
                 collection.push(certificate.clone());
                 self.students_certificates
                     .insert(student_address, &collection);
+            } else {
+                let collection = Vec::<Certificate>::new();
+                self.students_certificates.insert(student_address, &collection);
             }
             self.certificates.insert(self.next_id, &certificate);
             self.next_id += 1;
