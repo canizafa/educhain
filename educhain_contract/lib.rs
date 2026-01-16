@@ -13,7 +13,7 @@ mod educhain_contract {
 
     const ZERO_ADDRESS: Address = Address::zero();
 
-    #[derive(PartialEq, Eq)]
+    #[derive(PartialEq, Eq, Debug)]
     #[ink::storage_item(packed)]
     pub enum Role {
         Admin,
@@ -182,7 +182,8 @@ mod educhain_contract {
                     .insert(student_address, &collection);
             } else {
                 let collection = Vec::<Certificate>::new();
-                self.students_certificates.insert(student_address, &collection);
+                self.students_certificates
+                    .insert(student_address, &collection);
             }
             self.certificates.insert(self.next_id, &certificate);
             self.next_id += 1;
@@ -274,6 +275,50 @@ mod educhain_contract {
             app.owner = Address::zero();
             let result = app.owner_or_admin(Address::random());
             assert_eq!(result, Err(Err::InvalidOwner));
+
+            let address = Address::random();
+            let _ = app.grant_role(address, Role::Public);
+            let result_no_admin = app.owner_or_admin(address);
+            assert_eq!(result_no_admin, Err(Err::NonAuthorizaded));
+            let _ = app.grant_role(address, Role::Admin);
+            let result_admin = app.owner_or_admin(address);
+            assert_eq!(result_admin, Ok(()));
+        }
+        #[ink::test]
+        fn manage_role() {
+            let mut app = create_app();
+            let address = Address::random();
+
+            let result_add_role = app.grant_role(address, Role::Admin);
+            assert_eq!(result_add_role, Ok(()));
+            assert_eq!(app.roles.get(address), Some(Role::Admin));
+
+            let result_add_same_role = app.grant_role(address, Role::Admin);
+            assert_eq!(result_add_same_role, Err(Err::SameRole));
+
+            let result_revoke_role = app.revoke_role(address);
+            assert_eq!(result_revoke_role, Ok(()));
+            assert_eq!(app.roles.get(address), Some(Role::Public));
+
+            let result_cannot_revoke_public = app.revoke_role(address);
+
+            assert_eq!(result_cannot_revoke_public, Err(Err::CantRevokePublicRole));
+
+            let invalid_address = Address::random();
+
+            let result_invalid_address = app.revoke_role(invalid_address);
+            assert_eq!(result_invalid_address, Err(Err::NotAddressFound));
+        }
+        #[ink::test]
+        fn transfer_owner() {
+            let mut app = create_app();
+            let address = Address::random();
+            let result_new_owner = app.transfer_owner(address);
+            assert_eq!(result_new_owner, Ok(()));
+            let owner = app.owner;
+            assert_eq!(owner, address);
+            let result_invalid_owner = app.transfer_owner(address);
+            assert_eq!(result_invalid_owner, Err(Err::InvalidOwner));
         }
     }
 }

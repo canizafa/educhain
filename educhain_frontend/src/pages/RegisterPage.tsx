@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Link } from "react-router"
 
 export const RegisterPage = () => {
   return (
@@ -15,7 +16,7 @@ export const RegisterPage = () => {
           <div className="w-full flex flex-col gap-5">
             <Label className="font-semibold" htmlFor="email">Username</Label>
             <Input type="text" />
-          </div> 
+          </div>
           <div className="w-full flex flex-col gap-5">
             <Label className="font-semibold" htmlFor="password">Password</Label>
             <Input type="password" />
@@ -23,11 +24,14 @@ export const RegisterPage = () => {
           <div className="w-full flex flex-col gap-5">
             <Label className="font-semibold" htmlFor="password">Repeat password</Label>
             <Input type="password" />
-          </div>          
+          </div>
           <Button variant={"default"} className="w-full">
-            Log in
+            Create account
           </Button>
         </form>
+        <Link className="mt-5" to={"/login"}>
+          Do you have an account?
+        </Link>
       </div>
     </div>
   )

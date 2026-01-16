@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { Button } from "./ui/button"
 
 export const HeaderHome = () => {
@@ -9,8 +10,16 @@ export const HeaderHome = () => {
                 </h1>
             </div>
             <div className="flex gap-5 items-center font-semibold mx-5 text-center">
-                <Button variant="outline" className="rounded-xl p-2 w-50 font-semibold">Iniciar sesión</Button>
-                <Button variant={"outline"} className="rounded-xl p-2 w-50 font-semibold">Crear cuenta</Button>
+                <Button variant="outline" className="rounded p-2 w-50 font-semibold">
+                    <Link to={"/login"}>
+                        Sign In
+                    </Link>
+                </Button>
+                <Button variant="outline" className="rounded p-2 w-50 font-semibold">
+                    <Link to={"/register"}>
+                        Sign up
+                    </Link>
+                </Button>
             </div>
         </nav>
     )

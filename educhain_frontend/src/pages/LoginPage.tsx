@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Link } from "react-router"
 
 export const LoginPage = () => {
   return (
@@ -19,6 +20,9 @@ export const LoginPage = () => {
           <Button variant={"default"} className="w-full">
             Log in
           </Button>
+          <Link to={"/register"}>
+            Don't you have an account?
+          </Link>
         </form>
       </div>
     </div>

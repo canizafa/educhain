@@ -1,6 +1,16 @@
+import type { PropsWithChildren } from "react"
+import { AppSidebar } from "./Sidebar"
+import { SidebarProvider } from "./ui/sidebar"
 
-export const Layout = () => {
+export const Layout = ({children}: PropsWithChildren) => {
   return (
-    <div>Layout</div>
+    <div>
+      <SidebarProvider>
+        <AppSidebar />
+        <main>
+          {children}
+        </main>
+      </SidebarProvider>
+    </div>
   )
 }
